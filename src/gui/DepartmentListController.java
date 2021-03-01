@@ -47,6 +47,10 @@ public class DepartmentListController implements Initializable{
 	public void onBtNewAction(ActionEvent event) { 
 		createDialogForm(new Department(), "/gui/DepartmentForm.fxml", Utils.currentStage(event));	}
 	
+	public DepartmentService getDepartmentService() {
+		return service;
+	}
+	
 	public void setDepartmentService(DepartmentService service) {
 		this.service = service;
 	}
@@ -80,6 +84,7 @@ public class DepartmentListController implements Initializable{
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(department);
 			controller.updateFormData();
+			controller.setDepartmentService(getDepartmentService());
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Department data");

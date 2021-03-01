@@ -36,6 +36,7 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onMenuItemDepartmentAction() {
+		
 		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
 			controller.setDepartmentService(new DepartmentService()); 
 			controller.updateTableView(); 
@@ -48,7 +49,7 @@ public class MainViewController implements Initializable {
 	}
 	
 	@Override
-	public void initialize(URL uri, ResourceBundle rb) {
+	public void initialize(URL url, ResourceBundle rb) {
 	}
 
 	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
