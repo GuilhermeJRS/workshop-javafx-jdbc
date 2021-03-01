@@ -1,11 +1,14 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.mysql.cj.protocol.x.SyncFlushDeflaterOutputStream;
 
 import db.DbException;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -23,7 +26,9 @@ public class DepartmentFormController implements Initializable {
 
 	private Department entity;
 
-	private DepartmentService service;
+	private DepartmentService service; 
+	
+	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	@FXML
 	private TextField txtId;
@@ -50,10 +55,17 @@ public class DepartmentFormController implements Initializable {
 		} else {
 			try {
 				service.saveOrUpdate(entity);
+				notifyDataChangeListeners();
 				Utils.currentStage(event).close();
 			} catch (DbException e) {
 				Alerts.showAlert("Error saving Department", null, e.getMessage(), AlertType.ERROR);
 			}
+		}
+	}
+
+	private void notifyDataChangeListeners() {
+		for (DataChangeListener listener : dataChangeListeners) {
+			listener.onDataChanged();
 		}
 	}
 
@@ -95,5 +107,9 @@ public class DepartmentFormController implements Initializable {
 		}
 		txtId.setText(String.valueOf(entity.getId()));
 		txtName.setText(entity.getName());
+	}
+	
+	public void subscribeDataChangeListener(DataChangeListener listener) {
+		dataChangeListeners.add(listener);
 	}
 }
