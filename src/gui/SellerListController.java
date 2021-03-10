@@ -29,11 +29,14 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
+import model.services.DepartmentService;
 import model.services.SellerService;
 
 public class SellerListController implements Initializable, DataChangeListener {
 
-	private SellerService service;
+	private SellerService sellerService;
+
+	private DepartmentService departmentService;
 
 	@FXML
 	private TableView<Seller> tableViewSeller;
@@ -64,24 +67,29 @@ public class SellerListController implements Initializable, DataChangeListener {
 
 	private ObservableList<Seller> obsList;
 
+	public SellerService getSellerService() {
+		return sellerService;
+	}
+
+	public DepartmentService getDepartmentService() {
+		return departmentService;
+	}
+
+	public void setServices(SellerService sellerService, DepartmentService departmentService) {
+		this.sellerService = sellerService;
+		this.departmentService = departmentService;
+	}
+
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
 		createDialogForm(new Seller(), "/gui/SellerForm.fxml", Utils.currentStage(event));
 	}
 
-	public SellerService getSellerService() {
-		return service;
-	}
-
-	public void setSellerService(SellerService service) {
-		this.service = service;
-	}
-
 	public void updateTableView() {
-		if (service == null) {
+		if (sellerService == null) {
 			throw new IllegalStateException("The service is null");
 		}
-		obsList = FXCollections.observableArrayList(service.findAll());
+		obsList = FXCollections.observableArrayList(sellerService.findAll());
 		tableViewSeller.setItems(obsList);
 
 		initEditButtons();
@@ -113,7 +121,8 @@ public class SellerListController implements Initializable, DataChangeListener {
 
 			SellerFormController controller = loader.getController();
 			controller.setSeller(seller);
-			controller.setSellerService(getSellerService());
+			controller.setServices(getSellerService(), getDepartmentService());
+			controller.loadAssociatedObjects();
 			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 
@@ -173,12 +182,12 @@ public class SellerListController implements Initializable, DataChangeListener {
 
 	private void removeEntity(Seller obj) {
 		if (Alerts.showConfirmation("Confirmation", "Are you sure to delete?").get() == ButtonType.OK) {
-			if (service == null) {
+			if (sellerService == null) {
 				throw new IllegalStateException("The service is null");
 			}
 			
 			try {
-				service.remove(obj);
+				sellerService.remove(obj);
 				updateTableView();
 			}
 			catch (DbIntegrityException e) {

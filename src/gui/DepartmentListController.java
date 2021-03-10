@@ -55,17 +55,17 @@ public class DepartmentListController implements Initializable, DataChangeListen
 
 	private ObservableList<Department> obsList;
 
-	@FXML
-	public void onBtNewAction(ActionEvent event) {
-		createDialogForm(new Department(), "/gui/DepartmentForm.fxml", Utils.currentStage(event));
-	}
-
 	public DepartmentService getDepartmentService() {
 		return service;
 	}
 
 	public void setDepartmentService(DepartmentService service) {
 		this.service = service;
+	}
+
+	@FXML
+	public void onBtNewAction(ActionEvent event) {
+		createDialogForm(new Department(), "/gui/DepartmentForm.fxml", Utils.currentStage(event));
 	}
 
 	public void updateTableView() {
